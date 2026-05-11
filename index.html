@@ -1,194 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muguntha's Life Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #F8FAFC; --card-bg: #FFFFFF; --text-main: #0F172A;
+            --text-muted: #64748B; --border-color: #E2E8F0;
+            --primary: #3B82F6; --primary-light: #EFF6FF; --success: #10B981;
+            --success-light: #ECFDF5; --warning: #F59E0B; --danger: #EF4444;
+            --purple: #8B5CF6;
+            --font-sans: 'Inter', sans-serif;
+            --radius-lg: 20px; --radius-md: 12px; --radius-sm: 8px;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
 
-<h2 class="sr-only">Personal Life Dashboard — daily work tracker, expense tracker, savings goal, and monthly KPIs</h2>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-sans); background-color: var(--bg-color); color: var(--text-main); padding: 2rem; line-height: 1.5; }
+        .dashboard-wrapper { max-width: 1400px; margin: 0 auto; }
 
-<style>
-  .dash-wrap { padding: 1rem 0; font-family: var(--font-sans); }
-  .section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
-  .kpi { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
-  .kpi-label { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px; }
-  .kpi-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin: 0; }
-  .kpi-sub { font-size: 11px; color: var(--color-text-tertiary); margin: 2px 0 0; }
-  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-  .task-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
-  .task-row:last-child { border-bottom: none; }
-  .badge { font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); font-weight: 500; }
-  .badge-done { background: #EAF3DE; color: #3B6D11; }
-  .badge-prog { background: #FAEEDA; color: #854F0B; }
-  .badge-todo { background: #F1EFE8; color: #5F5E5A; }
-  .exp-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
-  .exp-row:last-child { border-bottom: none; }
-  .exp-cat { display: flex; align-items: center; gap: 8px; color: var(--color-text-primary); }
-  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .exp-amt { font-weight: 500; color: var(--color-text-primary); }
-  .goal-wrap { margin-top: 10px; }
-  .goal-row { margin-bottom: 14px; }
-  .goal-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
-  .goal-name { color: var(--color-text-primary); font-weight: 500; }
-  .goal-pct { color: var(--color-text-secondary); }
-  .progress-bg { background: var(--color-background-secondary); border-radius: 99px; height: 8px; width: 100%; }
-  .progress-fill { height: 8px; border-radius: 99px; }
-  .tab-row { display: flex; gap: 6px; margin-bottom: 1rem; }
-  .tab-btn { font-size: 12px; padding: 5px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
-  .tab-btn.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; }
-  @media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
-</style>
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.025em; }
+        .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.2rem; }
 
-<div class="dash-wrap">
+        .month-tabs { display: flex; gap: 0.5rem; background: var(--card-bg); padding: 0.35rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
+        .tab-btn { background: transparent; border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; }
+        .tab-btn.active { background: var(--primary); color: white; }
 
-<div class="tab-row">
-  <button class="tab-btn active" onclick="switchMonth(this,'May')">May 2025</button>
-  <button class="tab-btn" onclick="switchMonth(this,'Apr')">Apr 2025</button>
-  <button class="tab-btn" onclick="switchMonth(this,'Mar')">Mar 2025</button>
-</div>
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .kpi-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-md); display: flex; align-items: flex-start; justify-content: space-between; border: 1px solid var(--border-color); }
+        .kpi-info h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .kpi-value { font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem; }
+        .kpi-trend { font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.25rem; }
+        .trend-up { color: var(--success); }
+        .kpi-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
 
-<p class="section-title">Monthly summary</p>
-<div class="kpi-grid">
-  <div class="kpi"><p class="kpi-label">Total income</p><p class="kpi-value" id="kpi-income">₹52,000</p><p class="kpi-sub">This month</p></div>
-  <div class="kpi"><p class="kpi-label">Total spent</p><p class="kpi-value" id="kpi-spent">₹31,450</p><p class="kpi-sub">60% of income</p></div>
-  <div class="kpi"><p class="kpi-label">Saved</p><p class="kpi-value" id="kpi-saved">₹20,550</p><p class="kpi-sub">40% of income</p></div>
-  <div class="kpi"><p class="kpi-label">Tasks done</p><p class="kpi-value" id="kpi-tasks">18 / 24</p><p class="kpi-sub">75% completion</p></div>
-</div>
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+        .card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .card-title { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
 
-<div class="two-col">
+        .expense-tracker { grid-column: span 4; }
+        .savings-goals { grid-column: span 8; }
+        .task-tracker { grid-column: span 6; }
+        .monthly-trend { grid-column: span 6; }
+        .chart-container { position: relative; height: 220px; width: 100%; }
 
-  <div class="card">
-    <p class="section-title">Expense breakdown</p>
-    <div style="position:relative;width:100%;height:180px;"><canvas id="expChart" role="img" aria-label="Doughnut chart of monthly expenses by category">Rent 12000, Food 7500, Transport 3200, Learning 2800, Entertainment 2100, Misc 3850</canvas></div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
-      <span style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#534AB7;display:inline-block"></span>Rent</span>
-      <span style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block"></span>Food</span>
-      <span style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#D85A30;display:inline-block"></span>Transport</span>
-      <span style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#378ADD;display:inline-block"></span>Learning</span>
-      <span style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#D4537E;display:inline-block"></span>Entmt</span>
-      <span style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#888780;display:inline-block"></span>Misc</span>
-    </div>
-    <div class="goal-wrap" style="margin-top:12px;">
-      <div class="exp-row"><span class="exp-cat"><span class="dot" style="background:#534AB7"></span>Rent</span><span class="exp-amt">₹12,000</span></div>
-      <div class="exp-row"><span class="exp-cat"><span class="dot" style="background:#1D9E75"></span>Food</span><span class="exp-amt">₹7,500</span></div>
-      <div class="exp-row"><span class="exp-cat"><span class="dot" style="background:#D85A30"></span>Transport</span><span class="exp-amt">₹3,200</span></div>
-      <div class="exp-row"><span class="exp-cat"><span class="dot" style="background:#378ADD"></span>Learning</span><span class="exp-amt">₹2,800</span></div>
-      <div class="exp-row"><span class="exp-cat"><span class="dot" style="background:#D4537E"></span>Entertainment</span><span class="exp-amt">₹2,100</span></div>
-      <div class="exp-row"><span class="exp-cat"><span class="dot" style="background:#888780"></span>Misc</span><span class="exp-amt">₹3,850</span></div>
-    </div>
-  </div>
+        .expense-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem; }
+        .expense-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.85rem; border-bottom: 1px dashed var(--border-color); }
+        .expense-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .expense-cat { display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.95rem; }
+        .cat-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .expense-amt { font-weight: 600; }
 
-  <div style="display:flex;flex-direction:column;gap:1rem;">
-    <div class="card" style="flex:1;">
-      <p class="section-title">Savings goals</p>
-      <div class="goal-wrap">
-        <div class="goal-row">
-          <div class="goal-header"><span class="goal-name">Emergency fund</span><span class="goal-pct">72%</span></div>
-          <div class="progress-bg"><div class="progress-fill" style="width:72%;background:#1D9E75"></div></div>
-          <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:3px">₹72,000 / ₹1,00,000</div>
+        .goal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .goal-item { background: var(--bg-color); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        .goal-header { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+        .goal-name { font-weight: 600; font-size: 0.95rem; }
+        .goal-pct { font-weight: 700; color: var(--success); }
+        .progress-bar-bg { background: #E2E8F0; height: 8px; border-radius: 99px; overflow: hidden; margin-bottom: 0.75rem; }
+        .progress-bar-fill { height: 100%; border-radius: 99px; }
+        .goal-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+
+        .task-list { display: flex; flex-direction: column; gap: 0.6rem; }
+        .task-item { display: flex; align-items: center; gap: 1rem; padding: 0.9rem; border-radius: var(--radius-md); background: var(--bg-color); border: 1px solid var(--border-color); transition: all 0.2s ease; cursor: pointer; }
+        .task-item:hover { border-color: var(--primary); transform: translateX(4px); }
+        .task-item.completed { opacity: 0.6; background: transparent; }
+        .task-item.completed .task-text { text-decoration: line-through; color: var(--text-muted); }
+        .task-checkbox { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .task-item.completed .task-checkbox { background: var(--primary); border-color: var(--primary); }
+        .task-checkbox i { color: white; opacity: 0; font-size: 0.8rem; }
+        .task-item.completed .task-checkbox i { opacity: 1; }
+        .task-text { font-weight: 500; font-size: 0.95rem; flex: 1; }
+        .task-badge { font-size: 0.7rem; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
+        .badge-cog { background: #DBEAFE; color: #1E40AF; }
+        .badge-learn { background: #F3E8FF; color: #6B21A8; }
+        .badge-personal { background: #FEF3C7; color: #B45309; }
+
+        @media (max-width: 1024px) {
+            .expense-tracker, .savings-goals, .task-tracker, .monthly-trend { grid-column: span 12; }
+            .goal-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    
+    <header>
+        <div>
+            <h1>Muguntha Ganesh G</h1>
+            <p class="subtitle" id="dashboard-title">Data Engineer Dashboard • May 2026</p>
         </div>
-        <div class="goal-row">
-          <div class="goal-header"><span class="goal-name">Laptop upgrade</span><span class="goal-pct">45%</span></div>
-          <div class="progress-bg"><div class="progress-fill" style="width:45%;background:#534AB7"></div></div>
-          <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:3px">₹22,500 / ₹50,000</div>
+        <div class="month-tabs">
+            <button class="tab-btn" onclick="switchMonth('Mar', this)">Mar</button>
+            <button class="tab-btn" onclick="switchMonth('Apr', this)">Apr</button>
+            <button class="tab-btn active" onclick="switchMonth('May', this)">May 2026</button>
         </div>
-        <div class="goal-row">
-          <div class="goal-header"><span class="goal-name">Certification fees</span><span class="goal-pct">88%</span></div>
-          <div class="progress-bg"><div class="progress-fill" style="width:88%;background:#378ADD"></div></div>
-          <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:3px">₹8,800 / ₹10,000</div>
+    </header>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-info">
+                <h3>Take-Home Salary</h3>
+                <p class="kpi-value" id="kpi-income">₹46,500</p>
+                <p class="kpi-trend trend-up"><i class="ph ph-trend-up"></i> Post-Promotion</p>
+            </div>
+            <div class="kpi-icon" style="background: var(--primary-light); color: var(--primary);"><i class="ph ph-briefcase"></i></div>
         </div>
-        <div class="goal-row">
-          <div class="goal-header"><span class="goal-name">Trip savings</span><span class="goal-pct">30%</span></div>
-          <div class="progress-bg"><div class="progress-fill" style="width:30%;background:#D85A30"></div></div>
-          <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:3px">₹9,000 / ₹30,000</div>
+
+        <div class="kpi-card">
+            <div class="kpi-info">
+                <h3>Total Spent</h3>
+                <p class="kpi-value" id="kpi-spent">₹27,000</p>
+                <p class="kpi-trend"><span style="color:var(--text-muted)">Living within means</span></p>
+            </div>
+            <div class="kpi-icon" style="background: #FEF2F2; color: var(--danger);"><i class="ph ph-receipt"></i></div>
         </div>
-      </div>
+
+        <div class="kpi-card">
+            <div class="kpi-info">
+                <h3>Amount Saved</h3>
+                <p class="kpi-value" id="kpi-saved">₹19,500</p>
+                <p class="kpi-trend trend-up"><i class="ph ph-rocket"></i> <span id="kpi-rate">42% Savings Rate</span></p>
+            </div>
+            <div class="kpi-icon" style="background: var(--success-light); color: var(--success);"><i class="ph ph-piggy-bank"></i></div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-info">
+                <h3>Tasks / Sprint</h3>
+                <p class="kpi-value" id="kpi-tasks">12 / 16</p>
+                <p class="kpi-trend"><span style="color:var(--text-muted)">75% Completion</span></p>
+            </div>
+            <div class="kpi-icon" style="background: #FFFBEB; color: var(--warning);"><i class="ph ph-check-square-offset"></i></div>
+        </div>
     </div>
 
-    <div class="card">
-      <p class="section-title">Daily savings trend</p>
-      <div style="position:relative;width:100%;height:100px;"><canvas id="savingsChart" role="img" aria-label="Line chart of cumulative savings across weeks">Week1 5000, Week2 9500, Week3 14200, Week4 20550</canvas></div>
+    <div class="bento-grid">
+        <div class="card expense-tracker">
+            <div class="card-header">
+                <h2 class="card-title"><i class="ph ph-pie-chart" style="color:var(--primary)"></i> Spends Breakdown</h2>
+            </div>
+            <div class="chart-container" style="height: 180px;">
+                <canvas id="expenseChart"></canvas>
+            </div>
+            <div class="expense-list">
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #3B82F6"></div>Rent & EMIs</div><div class="expense-amt" id="exp-rent">₹12,000</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #10B981"></div>Food & Dining</div><div class="expense-amt" id="exp-food">₹5,500</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #F59E0B"></div>Travelling</div><div class="expense-amt" id="exp-travel">₹3,500</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #8B5CF6"></div>Rotaract / Learning</div><div class="expense-amt" id="exp-learn">₹3,500</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #94A3B8"></div>Misc</div><div class="expense-amt" id="exp-misc">₹2,500</div></div>
+            </div>
+        </div>
+
+        <div class="card savings-goals">
+            <div class="card-header">
+                <h2 class="card-title"><i class="ph ph-target" style="color:var(--success)"></i> Active Savings Goals</h2>
+            </div>
+            <div class="goal-grid">
+                <div class="goal-item">
+                    <div class="goal-header"><span class="goal-name">Emergency Fund (6 Months)</span><span class="goal-pct">70%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 70%; background: var(--success);"></div></div>
+                    <div class="goal-meta"><span>₹1,05,000 saved</span><span>Target: ₹1,50,000</span></div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-header"><span class="goal-name">Laptop / Tech Setup</span><span class="goal-pct">45%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%; background: var(--primary);"></div></div>
+                    <div class="goal-meta"><span>₹22,500 saved</span><span>Target: ₹50,000</span></div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-header"><span class="goal-name">DP-700 & Cert Fees</span><span class="goal-pct">80%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 80%; background: var(--purple);"></div></div>
+                    <div class="goal-meta"><span>₹12,000 saved</span><span>Target: ₹15,000</span></div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-header"><span class="goal-name">Travel / Vacation</span><span class="goal-pct">35%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 35%; background: var(--warning);"></div></div>
+                    <div class="goal-meta"><span>₹14,000 saved</span><span>Target: ₹40,000</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card task-tracker">
+            <div class="card-header">
+                <h2 class="card-title"><i class="ph ph-code" style="color:var(--warning)"></i> Sprint & Life Tracker</h2>
+            </div>
+            <div class="task-list">
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">PySpark batch job RCA for Insurance Client</span><span class="task-badge badge-cog">Cognizant</span>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">DP-700 Fabric Lakehouse Practice Test</span><span class="task-badge badge-learn">Study</span>
+                </div>
+                <div class="task-item completed" onclick="toggleTask(this)">
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Optimize Vector RAG prompt engineering</span><span class="task-badge badge-cog">Cognizant</span>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Pay Rotaract Club event fees</span><span class="task-badge badge-personal">Life</span>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Update AWS & DB2 ETL pipelines docs</span><span class="task-badge badge-cog">Cognizant</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card monthly-trend">
+            <div class="card-header">
+                <h2 class="card-title"><i class="ph ph-chart-line-up" style="color:var(--purple)"></i> Income vs Spending • Post-Promotion</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
     </div>
-  </div>
-
 </div>
 
-<div class="card">
-  <p class="section-title">Work task tracker — this week</p>
-  <div style="position:relative;width:100%;height:120px;margin-bottom:12px;"><canvas id="taskChart" role="img" aria-label="Bar chart of tasks by day this week">Mon 4, Tue 3, Wed 5, Thu 3, Fri 3</canvas></div>
-  <div id="task-list">
-    <div class="task-row"><i class="ti ti-circle-check" style="color:#3B6D11;font-size:16px" aria-hidden="true"></i><span style="flex:1">DP-700 Module 3 — Fabric Lakehouse study</span><span class="badge badge-done">Done</span></div>
-    <div class="task-row"><i class="ti ti-circle-check" style="color:#3B6D11;font-size:16px" aria-hidden="true"></i><span style="flex:1">ETL pipeline review for insurance client</span><span class="badge badge-done">Done</span></div>
-    <div class="task-row"><i class="ti ti-loader" style="color:#854F0B;font-size:16px" aria-hidden="true"></i><span style="flex:1">PySpark optimization — batch job performance</span><span class="badge badge-prog">In progress</span></div>
-    <div class="task-row"><i class="ti ti-loader" style="color:#854F0B;font-size:16px" aria-hidden="true"></i><span style="flex:1">DP-700 practice test — section 2</span><span class="badge badge-prog">In progress</span></div>
-    <div class="task-row"><i class="ti ti-circle" style="color:#888780;font-size:16px" aria-hidden="true"></i><span style="flex:1">Power BI dashboard mockup — portfolio</span><span class="badge badge-todo">To do</span></div>
-    <div class="task-row"><i class="ti ti-circle" style="color:#888780;font-size:16px" aria-hidden="true"></i><span style="flex:1">Update resume with DP-700 progress</span><span class="badge badge-todo">To do</span></div>
-  </div>
-</div>
-
-<div class="card">
-  <p class="section-title">Monthly spend vs income — 5 months</p>
-  <div style="position:relative;width:100%;height:160px;"><canvas id="trendChart" role="img" aria-label="Bar chart comparing income and spending over 5 months">Jan income 52000 spent 36000, Feb income 52000 spent 33000, Mar income 52000 spent 29000, Apr income 52000 spent 34000, May income 52000 spent 31450</canvas></div>
-</div>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const monthData = {
-  May: { income: 52000, spent: 31450, saved: 20550, tasks: '18 / 24', pct: '60%', savePct: '40%' },
-  Apr: { income: 52000, spent: 34000, saved: 18000, tasks: '15 / 22', pct: '65%', savePct: '35%' },
-  Mar: { income: 52000, spent: 29000, saved: 23000, tasks: '20 / 25', pct: '56%', savePct: '44%' }
-};
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#64748B';
 
-function fmt(n){ return '₹' + n.toLocaleString('en-IN'); }
+    // 1. Expense Doughnut Chart Init
+    const ctxExpense = document.getElementById('expenseChart').getContext('2d');
+    let expenseChart = new Chart(ctxExpense, {
+        type: 'doughnut',
+        data: {
+            labels: ['Rent & EMIs', 'Food & Dining', 'Travelling', 'Rotaract / Learning', 'Misc'],
+            datasets: [{
+                data: [12000, 5500, 3500, 3500, 2500],
+                backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#94A3B8'],
+                borderWidth: 0, hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, cutout: '72%',
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ₹' + ctx.parsed.toLocaleString('en-IN') } } }
+        }
+    });
 
-function switchMonth(btn, month) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const d = monthData[month];
-  document.getElementById('kpi-income').textContent = fmt(d.income);
-  document.getElementById('kpi-spent').textContent = fmt(d.spent);
-  document.getElementById('kpi-saved').textContent = fmt(d.saved);
-  document.getElementById('kpi-tasks').textContent = d.tasks;
-}
+    // 2. Trend Bar Chart Init
+    const ctxTrend = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctxTrend, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [
+                { label: 'Income (Take-Home)', data: [31000, 31000, 46500, 46500, 46500], backgroundColor: '#EFF6FF', hoverBackgroundColor: '#3B82F6', borderColor: '#3B82F6', borderWidth: 1, borderRadius: 6, barPercentage: 0.6 },
+                { label: 'Spent', data: [28000, 27500, 30000, 28500, 27000], backgroundColor: '#10B981', borderRadius: 6, barPercentage: 0.6 }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } } },
+            scales: { x: { grid: { display: false } }, y: { border: { display: false }, grid: { color: '#F1F5F9' }, ticks: { callback: value => '₹' + (value/1000) + 'k' } } }
+        }
+    });
 
-new Chart(document.getElementById('expChart'), {
-  type: 'doughnut',
-  data: {
-    labels: ['Rent','Food','Transport','Learning','Entertainment','Misc'],
-    datasets: [{ data: [12000,7500,3200,2800,2100,3850], backgroundColor: ['#534AB7','#1D9E75','#D85A30','#378ADD','#D4537E','#888780'], borderWidth: 0 }]
-  },
-  options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ₹' + ctx.parsed.toLocaleString('en-IN') } } } }
-});
+    // 3. Task Toggler
+    function toggleTask(element) {
+        element.classList.toggle('completed');
+    }
 
-new Chart(document.getElementById('savingsChart'), {
-  type: 'line',
-  data: {
-    labels: ['Wk 1','Wk 2','Wk 3','Wk 4'],
-    datasets: [{ label: 'Cumulative savings', data: [5000,9500,14200,20550], borderColor: '#1D9E75', backgroundColor: 'rgba(29,158,117,0.08)', fill: true, tension: 0.4, pointRadius: 3, borderWidth: 2 }]
-  },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 11 } } }, y: { ticks: { font: { size: 11 }, callback: v => '₹' + (v/1000).toFixed(0) + 'k' }, grid: { color: 'rgba(128,128,128,0.1)' } } } }
-});
+    // 4. THE FIX: Data and function for tab switching
+    const monthData = {
+        'Mar': {
+            income: 46500, spent: 30000, saved: 16500, rate: '35%', tasks: '15 / 18',
+            expenses: [12000, 7500, 4000, 3500, 3000] // Matching the 30k total spent
+        },
+        'Apr': {
+            income: 46500, spent: 28500, saved: 18000, rate: '38%', tasks: '14 / 16',
+            expenses: [12000, 6000, 3800, 3500, 3200] // Matching the 28.5k total spent
+        },
+        'May': {
+            income: 46500, spent: 27000, saved: 19500, rate: '42%', tasks: '12 / 16',
+            expenses: [12000, 5500, 3500, 3500, 2500] // Matching the 27k total spent
+        }
+    };
 
-new Chart(document.getElementById('taskChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Mon','Tue','Wed','Thu','Fri'],
-    datasets: [
-      { label: 'Done', data: [3,2,4,2,2], backgroundColor: '#1D9E75', borderRadius: 4 },
-      { label: 'In progress', data: [1,1,1,1,0], backgroundColor: '#EF9F27', borderRadius: 4 },
-      { label: 'To do', data: [0,0,0,0,1], backgroundColor: '#B4B2A9', borderRadius: 4 }
-    ]
-  },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { stacked: true, ticks: { font: { size: 11 } } }, y: { stacked: true, ticks: { stepSize: 2, font: { size: 11 } }, grid: { color: 'rgba(128,128,128,0.1)' } } } }
-});
+    function fmt(num) {
+        return '₹' + num.toLocaleString('en-IN');
+    }
 
-new Chart(document.getElementById('trendChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Jan','Feb','Mar','Apr','May'],
-    datasets: [
-      { label: 'Income', data: [52000,52000,52000,52000,52000], backgroundColor: '#AFA9EC', borderRadius: 4 },
-      { label: 'Spent', data: [36000,33000,29000,34000,31450], backgroundColor: '#D85A30', borderRadius: 4 }
-    ]
-  },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 11 } } }, y: { ticks: { font: { size: 11 }, callback: v => '₹' + (v/1000).toFixed(0) + 'k' }, grid: { color: 'rgba(128,128,128,0.1)' } } } }
-});
+    function switchMonth(month, btnElement) {
+        // Update active class on tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+
+        // Update the subtitle
+        document.getElementById('dashboard-title').innerText = `Data Engineer Dashboard • ${month} 2026`;
+
+        // Fetch data for the selected month
+        const data = monthData[month];
+
+        // Update KPIs
+        document.getElementById('kpi-income').innerText = fmt(data.income);
+        document.getElementById('kpi-spent').innerText = fmt(data.spent);
+        document.getElementById('kpi-saved').innerText = fmt(data.saved);
+        document.getElementById('kpi-rate').innerText = `${data.rate} Savings Rate`;
+        document.getElementById('kpi-tasks').innerText = data.tasks;
+
+        // Update Expense List text
+        document.getElementById('exp-rent').innerText = fmt(data.expenses[0]);
+        document.getElementById('exp-food').innerText = fmt(data.expenses[1]);
+        document.getElementById('exp-travel').innerText = fmt(data.expenses[2]);
+        document.getElementById('exp-learn').innerText = fmt(data.expenses[3]);
+        document.getElementById('exp-misc').innerText = fmt(data.expenses[4]);
+
+        // Update the Doughnut Chart
+        expenseChart.data.datasets[0].data = data.expenses;
+        expenseChart.update();
+    }
 </script>
+
+</body>
+</html>
