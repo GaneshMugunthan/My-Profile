@@ -3,84 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muguntha's Life Dashboard</title>
+    <title>Muguntha's Life Dashboard • Pro Dark</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
-            --bg-color: #F8FAFC; --card-bg: #FFFFFF; --text-main: #0F172A;
-            --text-muted: #64748B; --border-color: #E2E8F0;
-            --primary: #3B82F6; --primary-light: #EFF6FF; --success: #10B981;
-            --success-light: #ECFDF5; --warning: #F59E0B; --danger: #EF4444;
-            --purple: #8B5CF6;
+            /* --- PROFESSIONAL DARK THEME --- */
+            --bg-color: #0D1117;     /* Deep Slate/Charcoal background */
+            --card-bg: #161B22;      /* Lighter gray for cards (Creates depth) */
+            --text-main: #E6EDF3;    /* Crisp, slightly off-white text */
+            --text-muted: #8D96A0;   /* Readable gray for secondary text */
+            --border-color: #30363D; /* Visible, clean borders */
+            
+            /* Accents */
+            --primary: #3B82F6;      /* Blue */
+            --success: #238636;      /* Pro Green */
+            --warning: #D29922;      /* Pro Gold/Orange */
+            --danger: #DA3633;       /* Pro Red */
+            --purple: #8957E5;       /* Pro Purple */
+            
+            /* Typography & Radius */
             --font-sans: 'Inter', sans-serif;
-            --radius-lg: 20px; --radius-md: 12px; --radius-sm: 8px;
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: var(--font-sans); background-color: var(--bg-color); color: var(--text-main); padding: 2rem; line-height: 1.5; }
+        body { font-family: var(--font-sans); background-color: var(--bg-color); color: var(--text-main); padding: 2rem; line-height: 1.5; -webkit-font-smoothing: antialiased; }
         .dashboard-wrapper { max-width: 1400px; margin: 0 auto; }
 
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.025em; }
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+        h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.03em; color: #FFFFFF; }
         .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.2rem; }
 
-        .month-tabs { display: flex; gap: 0.5rem; background: var(--card-bg); padding: 0.35rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
-        .tab-btn { background: transparent; border: none; padding: 0.5rem 1rem; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; }
-        .tab-btn.active { background: var(--primary); color: white; }
+        /* Tabs */
+        .month-tabs { display: flex; gap: 0.4rem; background: var(--bg-color); padding: 0.3rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        .tab-btn { background: transparent; border: none; padding: 0.5rem 1.1rem; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; }
+        .tab-btn:hover { color: #FFFFFF; background: rgba(255,255,255,0.05); }
+        .tab-btn.active { background: var(--primary); color: #FFFFFF; }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-        .kpi-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-md); display: flex; align-items: flex-start; justify-content: space-between; border: 1px solid var(--border-color); }
-        .kpi-info h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem; }
-        .kpi-value { font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem; }
-        .kpi-trend { font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.25rem; }
-        .trend-up { color: var(--success); }
-        .kpi-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        /* KPI Grid */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem; }
+        .kpi-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; border: 1px solid var(--border-color); }
+        .kpi-info h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600; }
+        .kpi-value { font-size: 2rem; font-weight: 700; color: #FFFFFF; margin-bottom: 0.2rem; letter-spacing: -0.02em; }
+        .kpi-trend { font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+        .trend-up { color: #3FB950; } /* Lighter green for text against dark bg */
+        .kpi-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; border: 1px solid var(--border-color); background: var(--bg-color); }
 
-        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
-        .card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .card-title { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        /* Bento Grid */
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem; }
+        .card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--border-color); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+        .card-title { font-size: 1.05rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem; color: #FFFFFF; }
 
         .expense-tracker { grid-column: span 4; }
         .savings-goals { grid-column: span 8; }
         .task-tracker { grid-column: span 6; }
         .monthly-trend { grid-column: span 6; }
-        .chart-container { position: relative; height: 220px; width: 100%; }
+        .chart-container { position: relative; height: 200px; width: 100%; }
 
-        .expense-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem; }
-        .expense-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.85rem; border-bottom: 1px dashed var(--border-color); }
+        /* Expense List */
+        .expense-list { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .expense-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
         .expense-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .expense-cat { display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.95rem; }
+        .expense-cat { display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; color: var(--text-main); }
         .cat-dot { width: 10px; height: 10px; border-radius: 50%; }
-        .expense-amt { font-weight: 600; }
+        .expense-amt { font-weight: 600; color: #FFFFFF; font-size: 0.95rem; }
 
-        .goal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        /* Savings Goals */
+        .goal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
         .goal-item { background: var(--bg-color); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
-        .goal-header { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
-        .goal-name { font-weight: 600; font-size: 0.95rem; }
-        .goal-pct { font-weight: 700; color: var(--success); }
-        .progress-bar-bg { background: #E2E8F0; height: 8px; border-radius: 99px; overflow: hidden; margin-bottom: 0.75rem; }
+        .goal-header { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
+        .goal-name { font-weight: 600; font-size: 0.9rem; color: #FFFFFF; }
+        .goal-pct { font-weight: 700; color: #3FB950; font-size: 0.95rem; }
+        .progress-bar-bg { background: var(--border-color); height: 6px; border-radius: 99px; overflow: hidden; margin-bottom: 0.75rem; }
         .progress-bar-fill { height: 100%; border-radius: 99px; }
-        .goal-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+        .goal-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; }
 
-        .task-list { display: flex; flex-direction: column; gap: 0.6rem; }
-        .task-item { display: flex; align-items: center; gap: 1rem; padding: 0.9rem; border-radius: var(--radius-md); background: var(--bg-color); border: 1px solid var(--border-color); transition: all 0.2s ease; cursor: pointer; }
-        .task-item:hover { border-color: var(--primary); transform: translateX(4px); }
-        .task-item.completed { opacity: 0.6; background: transparent; }
+        /* Task Tracker */
+        .task-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .task-item { display: flex; align-items: center; gap: 0.9rem; padding: 0.85rem; border-radius: var(--radius-md); background: var(--bg-color); border: 1px solid var(--border-color); transition: all 0.2s ease; cursor: pointer; }
+        .task-item:hover { border-color: #58A6FF; transform: translateX(3px); }
+        .task-item.completed { opacity: 0.5; }
         .task-item.completed .task-text { text-decoration: line-through; color: var(--text-muted); }
-        .task-checkbox { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .task-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .task-item.completed .task-checkbox { background: var(--primary); border-color: var(--primary); }
-        .task-checkbox i { color: white; opacity: 0; font-size: 0.8rem; }
+        .task-checkbox i { color: white; opacity: 0; font-size: 0.75rem; }
         .task-item.completed .task-checkbox i { opacity: 1; }
-        .task-text { font-weight: 500; font-size: 0.95rem; flex: 1; }
-        .task-badge { font-size: 0.7rem; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
-        .badge-cog { background: #DBEAFE; color: #1E40AF; }
-        .badge-learn { background: #F3E8FF; color: #6B21A8; }
-        .badge-personal { background: #FEF3C7; color: #B45309; }
+        .task-text { font-weight: 500; font-size: 0.9rem; flex: 1; color: var(--text-main); }
+        .task-badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; background: var(--border-color); color: var(--text-main); }
 
         @media (max-width: 1024px) {
             .expense-tracker, .savings-goals, .task-tracker, .monthly-trend { grid-column: span 12; }
@@ -95,12 +111,12 @@
     <header>
         <div>
             <h1>Muguntha Ganesh G</h1>
-            <p class="subtitle" id="dashboard-title">Data Engineer Dashboard • May 2026</p>
+            <p class="subtitle" id="dashboard-title">Data Engineer • May 2026 Summary</p>
         </div>
         <div class="month-tabs">
             <button class="tab-btn" onclick="switchMonth('Mar', this)">Mar</button>
             <button class="tab-btn" onclick="switchMonth('Apr', this)">Apr</button>
-            <button class="tab-btn active" onclick="switchMonth('May', this)">May 2026</button>
+            <button class="tab-btn active" onclick="switchMonth('May', this)">May '26</button>
         </div>
     </header>
 
@@ -109,9 +125,9 @@
             <div class="kpi-info">
                 <h3>Take-Home Salary</h3>
                 <p class="kpi-value" id="kpi-income">₹46,500</p>
-                <p class="kpi-trend trend-up"><i class="ph ph-trend-up"></i> Post-Promotion</p>
+                <p class="kpi-trend trend-up"><i class="ph-bold ph-arrow-up-right"></i> Post-Promotion</p>
             </div>
-            <div class="kpi-icon" style="background: var(--primary-light); color: var(--primary);"><i class="ph ph-briefcase"></i></div>
+            <div class="kpi-icon" style="color: var(--primary);"><i class="ph ph-briefcase"></i></div>
         </div>
 
         <div class="kpi-card">
@@ -120,99 +136,99 @@
                 <p class="kpi-value" id="kpi-spent">₹27,000</p>
                 <p class="kpi-trend"><span style="color:var(--text-muted)">Living within means</span></p>
             </div>
-            <div class="kpi-icon" style="background: #FEF2F2; color: var(--danger);"><i class="ph ph-receipt"></i></div>
+            <div class="kpi-icon" style="color: #FF7B72;"><i class="ph ph-receipt"></i></div>
         </div>
 
         <div class="kpi-card">
             <div class="kpi-info">
                 <h3>Amount Saved</h3>
                 <p class="kpi-value" id="kpi-saved">₹19,500</p>
-                <p class="kpi-trend trend-up"><i class="ph ph-rocket"></i> <span id="kpi-rate">42% Savings Rate</span></p>
+                <p class="kpi-trend trend-up"><i class="ph-bold ph-rocket-launch"></i> <span id="kpi-rate">42% Saved</span></p>
             </div>
-            <div class="kpi-icon" style="background: var(--success-light); color: var(--success);"><i class="ph ph-piggy-bank"></i></div>
+            <div class="kpi-icon" style="color: #3FB950;"><i class="ph ph-piggy-bank"></i></div>
         </div>
 
         <div class="kpi-card">
             <div class="kpi-info">
-                <h3>Tasks / Sprint</h3>
+                <h3>Tasks Complete</h3>
                 <p class="kpi-value" id="kpi-tasks">12 / 16</p>
-                <p class="kpi-trend"><span style="color:var(--text-muted)">75% Completion</span></p>
+                <p class="kpi-trend"><span style="color:var(--text-muted)">75% Sprint Velocity</span></p>
             </div>
-            <div class="kpi-icon" style="background: #FFFBEB; color: var(--warning);"><i class="ph ph-check-square-offset"></i></div>
+            <div class="kpi-icon" style="color: var(--warning);"><i class="ph ph-check-square-offset"></i></div>
         </div>
     </div>
 
     <div class="bento-grid">
         <div class="card expense-tracker">
             <div class="card-header">
-                <h2 class="card-title"><i class="ph ph-pie-chart" style="color:var(--primary)"></i> Spends Breakdown</h2>
+                <h2 class="card-title"><i class="ph ph-chart-pie-slice" style="color:var(--primary)"></i> Expense Allocation</h2>
             </div>
             <div class="chart-container" style="height: 180px;">
                 <canvas id="expenseChart"></canvas>
             </div>
             <div class="expense-list">
                 <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #3B82F6"></div>Rent & EMIs</div><div class="expense-amt" id="exp-rent">₹12,000</div></div>
-                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #10B981"></div>Food & Dining</div><div class="expense-amt" id="exp-food">₹5,500</div></div>
-                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #F59E0B"></div>Travelling</div><div class="expense-amt" id="exp-travel">₹3,500</div></div>
-                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #8B5CF6"></div>Rotaract / Learning</div><div class="expense-amt" id="exp-learn">₹3,500</div></div>
-                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #94A3B8"></div>Misc</div><div class="expense-amt" id="exp-misc">₹2,500</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #238636"></div>Food & Dining</div><div class="expense-amt" id="exp-food">₹5,500</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #D29922"></div>Travelling</div><div class="expense-amt" id="exp-travel">₹3,500</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #8957E5"></div>Rotaract / Learn</div><div class="expense-amt" id="exp-learn">₹3,500</div></div>
+                <div class="expense-item"><div class="expense-cat"><div class="cat-dot" style="background: #8D96A0"></div>Misc</div><div class="expense-amt" id="exp-misc">₹2,500</div></div>
             </div>
         </div>
 
         <div class="card savings-goals">
             <div class="card-header">
-                <h2 class="card-title"><i class="ph ph-target" style="color:var(--success)"></i> Active Savings Goals</h2>
+                <h2 class="card-title"><i class="ph ph-target" style="color:#3FB950"></i> High-Yield Savings Goals</h2>
             </div>
             <div class="goal-grid">
                 <div class="goal-item">
-                    <div class="goal-header"><span class="goal-name">Emergency Fund (6 Months)</span><span class="goal-pct">70%</span></div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 70%; background: var(--success);"></div></div>
-                    <div class="goal-meta"><span>₹1,05,000 saved</span><span>Target: ₹1,50,000</span></div>
+                    <div class="goal-header"><span class="goal-name">Emergency Fund (6Mo)</span><span class="goal-pct">70%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 70%; background: #238636;"></div></div>
+                    <div class="goal-meta"><span>₹1,05,000</span><span>Target: ₹1.5L</span></div>
                 </div>
                 <div class="goal-item">
-                    <div class="goal-header"><span class="goal-name">Laptop / Tech Setup</span><span class="goal-pct">45%</span></div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%; background: var(--primary);"></div></div>
-                    <div class="goal-meta"><span>₹22,500 saved</span><span>Target: ₹50,000</span></div>
+                    <div class="goal-header"><span class="goal-name">Tech Setup Upgrade</span><span class="goal-pct">45%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%; background: #3B82F6;"></div></div>
+                    <div class="goal-meta"><span>₹22,500</span><span>Target: ₹50k</span></div>
                 </div>
                 <div class="goal-item">
-                    <div class="goal-header"><span class="goal-name">DP-700 & Cert Fees</span><span class="goal-pct">80%</span></div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 80%; background: var(--purple);"></div></div>
-                    <div class="goal-meta"><span>₹12,000 saved</span><span>Target: ₹15,000</span></div>
+                    <div class="goal-header"><span class="goal-name">DP-700 Cert Fees</span><span class="goal-pct">80%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 80%; background: #8957E5;"></div></div>
+                    <div class="goal-meta"><span>₹12,000</span><span>Target: ₹15k</span></div>
                 </div>
                 <div class="goal-item">
-                    <div class="goal-header"><span class="goal-name">Travel / Vacation</span><span class="goal-pct">35%</span></div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 35%; background: var(--warning);"></div></div>
-                    <div class="goal-meta"><span>₹14,000 saved</span><span>Target: ₹40,000</span></div>
+                    <div class="goal-header"><span class="goal-name">Vacation Fund</span><span class="goal-pct">35%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 35%; background: #D29922;"></div></div>
+                    <div class="goal-meta"><span>₹14,000</span><span>Target: ₹40k</span></div>
                 </div>
             </div>
         </div>
 
         <div class="card task-tracker">
             <div class="card-header">
-                <h2 class="card-title"><i class="ph ph-code" style="color:var(--warning)"></i> Sprint & Life Tracker</h2>
+                <h2 class="card-title"><i class="ph ph-cpu" style="color:var(--warning)"></i> Engineering & Life Backlog</h2>
             </div>
             <div class="task-list">
                 <div class="task-item" onclick="toggleTask(this)">
-                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">PySpark batch job RCA for Insurance Client</span><span class="task-badge badge-cog">Cognizant</span>
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">PySpark batch job RCA (Insurance Client)</span><span class="task-badge">Cognizant</span>
                 </div>
                 <div class="task-item" onclick="toggleTask(this)">
-                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">DP-700 Fabric Lakehouse Practice Test</span><span class="task-badge badge-learn">Study</span>
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">DP-700 Fabric Lakehouse Practice Lab</span><span class="task-badge">Study</span>
                 </div>
                 <div class="task-item completed" onclick="toggleTask(this)">
-                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Optimize Vector RAG prompt engineering</span><span class="task-badge badge-cog">Cognizant</span>
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Optimize GenAI Vector RAG prompt</span><span class="task-badge">Cognizant</span>
                 </div>
                 <div class="task-item" onclick="toggleTask(this)">
-                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Pay Rotaract Club event fees</span><span class="task-badge badge-personal">Life</span>
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Setup automated monthly mutual fund transfer</span><span class="task-badge">Finance</span>
                 </div>
                 <div class="task-item" onclick="toggleTask(this)">
-                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Update AWS & DB2 ETL pipelines docs</span><span class="task-badge badge-cog">Cognizant</span>
+                    <div class="task-checkbox"><i class="ph-bold ph-check"></i></div><span class="task-text">Review Rotaract community project budget</span><span class="task-badge">Rotaract</span>
                 </div>
             </div>
         </div>
 
         <div class="card monthly-trend">
             <div class="card-header">
-                <h2 class="card-title"><i class="ph ph-chart-line-up" style="color:var(--purple)"></i> Income vs Spending • Post-Promotion</h2>
+                <h2 class="card-title"><i class="ph ph-chart-line-up" style="color:var(--purple)"></i> Post-Promotion Cashflow Trend</h2>
             </div>
             <div class="chart-container">
                 <canvas id="trendChart"></canvas>
@@ -222,42 +238,74 @@
 </div>
 
 <script>
+    // --- Dark Mode Chart Configuration ---
     Chart.defaults.font.family = "'Inter', sans-serif";
-    Chart.defaults.color = '#64748B';
+    Chart.defaults.color = '#8D96A0'; 
+    Chart.defaults.plugins.tooltip.backgroundColor = '#0D1117';
+    Chart.defaults.plugins.tooltip.titleColor = '#FFFFFF';
+    Chart.defaults.plugins.tooltip.bodyColor = '#E6EDF3';
+    Chart.defaults.plugins.tooltip.borderColor = '#30363D';
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    Chart.defaults.plugins.tooltip.padding = 10;
+    Chart.defaults.plugins.tooltip.cornerRadius = 8;
 
-    // 1. Expense Doughnut Chart Init
+    // 1. Expense Doughnut Chart
     const ctxExpense = document.getElementById('expenseChart').getContext('2d');
     let expenseChart = new Chart(ctxExpense, {
         type: 'doughnut',
         data: {
-            labels: ['Rent & EMIs', 'Food & Dining', 'Travelling', 'Rotaract / Learning', 'Misc'],
+            labels: ['Rent & EMIs', 'Food & Dining', 'Travelling', 'Rotaract / Learn', 'Misc'],
             datasets: [{
                 data: [12000, 5500, 3500, 3500, 2500],
-                backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#94A3B8'],
-                borderWidth: 0, hoverOffset: 4
+                backgroundColor: ['#3B82F6', '#238636', '#D29922', '#8957E5', '#8D96A0'],
+                borderWidth: 2,
+                borderColor: '#161B22', // Matches card background 
+                hoverOffset: 5
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, cutout: '72%',
+            responsive: true, maintainAspectRatio: false, cutout: '75%',
             plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ₹' + ctx.parsed.toLocaleString('en-IN') } } }
         }
     });
 
-    // 2. Trend Bar Chart Init
+    // 2. Trend Bar Chart
     const ctxTrend = document.getElementById('trendChart').getContext('2d');
     new Chart(ctxTrend, {
         type: 'bar',
         data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
             datasets: [
-                { label: 'Income (Take-Home)', data: [31000, 31000, 46500, 46500, 46500], backgroundColor: '#EFF6FF', hoverBackgroundColor: '#3B82F6', borderColor: '#3B82F6', borderWidth: 1, borderRadius: 6, barPercentage: 0.6 },
-                { label: 'Spent', data: [28000, 27500, 30000, 28500, 27000], backgroundColor: '#10B981', borderRadius: 6, barPercentage: 0.6 }
+                { 
+                    label: 'Income', 
+                    data: [31000, 31000, 46500, 46500, 46500], 
+                    backgroundColor: 'rgba(59, 130, 246, 0.15)', 
+                    hoverBackgroundColor: '#3B82F6', 
+                    borderColor: '#3B82F6', 
+                    borderWidth: 1.5, 
+                    borderRadius: 4, 
+                    barPercentage: 0.6 
+                },
+                { 
+                    label: 'Spent', 
+                    data: [28000, 27500, 30000, 28500, 27000], 
+                    backgroundColor: '#238636', 
+                    borderRadius: 4, 
+                    barPercentage: 0.6 
+                }
             ]
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } } },
-            scales: { x: { grid: { display: false } }, y: { border: { display: false }, grid: { color: '#F1F5F9' }, ticks: { callback: value => '₹' + (value/1000) + 'k' } } }
+            plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 6, color: '#E6EDF3' } } },
+            scales: { 
+                x: { grid: { display: false }, ticks: { color: '#8D96A0' } }, 
+                y: { 
+                    border: { display: false }, 
+                    grid: { color: '#30363D' }, 
+                    ticks: { color: '#8D96A0', callback: value => '₹' + (value/1000) + 'k' } 
+                } 
+            }
         }
     });
 
@@ -266,52 +314,30 @@
         element.classList.toggle('completed');
     }
 
-    // 4. THE FIX: Data and function for tab switching
+    // 4. Monthly Data Switching Logic
     const monthData = {
-        'Mar': {
-            income: 46500, spent: 30000, saved: 16500, rate: '35%', tasks: '15 / 18',
-            expenses: [12000, 7500, 4000, 3500, 3000] // Matching the 30k total spent
-        },
-        'Apr': {
-            income: 46500, spent: 28500, saved: 18000, rate: '38%', tasks: '14 / 16',
-            expenses: [12000, 6000, 3800, 3500, 3200] // Matching the 28.5k total spent
-        },
-        'May': {
-            income: 46500, spent: 27000, saved: 19500, rate: '42%', tasks: '12 / 16',
-            expenses: [12000, 5500, 3500, 3500, 2500] // Matching the 27k total spent
-        }
+        'Mar': { income: 46500, spent: 30000, saved: 16500, rate: '35%', tasks: '15 / 18', expenses: [12000, 7500, 4000, 3500, 3000] },
+        'Apr': { income: 46500, spent: 28500, saved: 18000, rate: '38%', tasks: '14 / 16', expenses: [12000, 6000, 3800, 3500, 3200] },
+        'May': { income: 46500, spent: 27000, saved: 19500, rate: '42%', tasks: '12 / 16', expenses: [12000, 5500, 3500, 3500, 2500] }
     };
 
-    function fmt(num) {
-        return '₹' + num.toLocaleString('en-IN');
-    }
+    function fmt(num) { return '₹' + num.toLocaleString('en-IN'); }
 
     function switchMonth(month, btnElement) {
-        // Update active class on tabs
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
-
-        // Update the subtitle
-        document.getElementById('dashboard-title').innerText = `Data Engineer Dashboard • ${month} 2026`;
-
-        // Fetch data for the selected month
+        document.getElementById('dashboard-title').innerText = `Data Engineer • ${month} 2026 Summary`;
         const data = monthData[month];
-
-        // Update KPIs
         document.getElementById('kpi-income').innerText = fmt(data.income);
         document.getElementById('kpi-spent').innerText = fmt(data.spent);
         document.getElementById('kpi-saved').innerText = fmt(data.saved);
-        document.getElementById('kpi-rate').innerText = `${data.rate} Savings Rate`;
+        document.getElementById('kpi-rate').innerText = `${data.rate} Saved`;
         document.getElementById('kpi-tasks').innerText = data.tasks;
-
-        // Update Expense List text
         document.getElementById('exp-rent').innerText = fmt(data.expenses[0]);
         document.getElementById('exp-food').innerText = fmt(data.expenses[1]);
         document.getElementById('exp-travel').innerText = fmt(data.expenses[2]);
         document.getElementById('exp-learn').innerText = fmt(data.expenses[3]);
         document.getElementById('exp-misc').innerText = fmt(data.expenses[4]);
-
-        // Update the Doughnut Chart
         expenseChart.data.datasets[0].data = data.expenses;
         expenseChart.update();
     }
